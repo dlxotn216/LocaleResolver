@@ -51,6 +51,15 @@ public class LocaleControllerTest {
     }
 
     @Test
+    public void testForSendQueryString(){
+        ResponseEntity<LocaleMap> response
+                = restTemplate.getForEntity("/locales?lang=en_CA", LocaleMap.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().getLocaleContextHolderLocale()).isEqualTo(Locale.CANADA);
+    }
+
+    @Test
     public void testForChangeAcceptLanguageAndParam() {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Accept-Language", "ja_JP");
@@ -62,17 +71,8 @@ public class LocaleControllerTest {
         assertThat(response.getBody().getLocaleContextHolderLocale()).isEqualTo(Locale.KOREA);
     }
 
-    @Test
-    public void testForSendQueryString(){
-        ResponseEntity<LocaleMap> response
-                = restTemplate.getForEntity("/locales?lang=en_CA", LocaleMap.class);
-
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody().getLocaleContextHolderLocale()).isEqualTo(Locale.CANADA);
-    }
-
     /**
-     * 지원하지 않는 local이면 default locald을 반환할 것이다
+     * 지원하지 않는 local이면 ApplicationLocaleContextholder에서는 default locald을 반환할 것이다
      */
     @Test
     public void testForAppLocaleContextHolder(){

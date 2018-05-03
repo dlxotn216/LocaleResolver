@@ -21,9 +21,9 @@ public class AppLocaleContextHolder {
     @Autowired
     public AppLocaleContextHolder(ApplicationLocaleProperties applicationLocaleProperties) {
         List<String> acceptableLanguages = applicationLocaleProperties.getLanguages();
-        if(!CollectionUtils.isEmpty(acceptableLanguages)){
-            for(String language: acceptableLanguages){
-                acceptableLocales.add(new Locale(language));
+        if (!CollectionUtils.isEmpty(acceptableLanguages)) {
+            for (int i = 0, length = applicationLocaleProperties.getLanguages().size(); i < length; i++) {
+                acceptableLocales.add(applicationLocaleProperties.getLocale(i));
             }
         }
     }

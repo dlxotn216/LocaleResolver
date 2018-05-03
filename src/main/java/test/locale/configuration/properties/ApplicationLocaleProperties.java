@@ -19,4 +19,10 @@ public class ApplicationLocaleProperties {
     public static final Locale defaultLocale = Locale.ENGLISH;
 
     private List<String> languages;
+
+    private List<String> countries;
+
+    public Locale getLocale(int index) {
+        return new Locale(languages.get(index), countries.get(index));
+    }
 }
