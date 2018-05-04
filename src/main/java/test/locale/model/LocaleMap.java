@@ -11,7 +11,7 @@ import java.util.Locale;
 @Getter
 @Setter
 public class LocaleMap {
-    private Locale requestHeaderLocale;
+    private Locale requestGetLocale;
     private Locale controllerArgLocale;
     private Locale localeContextHolderLocale;
     private Locale appLocaleContextHolderLocale;
@@ -19,8 +19,8 @@ public class LocaleMap {
     public LocaleMap() {
     }
 
-    public LocaleMap(Locale requestHeaderLocale, Locale controllerArgLocale, Locale localeContextHolderLocale, Locale appLocaleContextHolderLocale) {
-        this.requestHeaderLocale = requestHeaderLocale;
+    public LocaleMap(Locale requestGetLocale, Locale controllerArgLocale, Locale localeContextHolderLocale, Locale appLocaleContextHolderLocale) {
+        this.requestGetLocale = requestGetLocale;
         this.controllerArgLocale = controllerArgLocale;
         this.localeContextHolderLocale = localeContextHolderLocale;
         this.appLocaleContextHolderLocale = appLocaleContextHolderLocale;

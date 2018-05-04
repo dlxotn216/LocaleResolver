@@ -18,10 +18,10 @@ import java.util.Locale;
 public class AcceptHeaderThenCookieLocaleResolver extends CookieLocaleResolver {
     @Nullable
     protected Locale determineDefaultLocale(HttpServletRequest request) {
-        if(!StringUtils.isEmpty(request.getHeader("Accept-Language"))){
-            return new Locale(request.getHeader("Accept-Language"));
-        }
-        else{
+        if(!StringUtils.isEmpty(request.getHeader("Accept-Language"))){				//headers.setAcceptLanguageAsLocales(Arrays.asList(Locale.JAPAN)) ja_JP 이지만 setAcceptLanguageAsLocales 내부에서 ja-JP로 바꿈 (toLanguageTag 메소드 호출 함)
+            return Locale.forLanguageTag(request.getHeader("Accept-Language"));		//Accept header에서 ja-JP, ko-KR로 전송되는 경우가 있다 -> _(Under bar)를 허용하지 않기 때문이다
+        }																				//https://docs.oracle.com/javase/tutorial/i18n/locale/matching.html
+        else{	
             return super.determineDefaultLocale(request);
         }
     }
