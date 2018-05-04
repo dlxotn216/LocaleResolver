@@ -27,7 +27,7 @@ public class LocaleControllerTest {
 	/**
 	 * request.getLocale에선 ko_KR로 시스템의 default locale을 반환 함
 	 */
-//	@Test
+	@Test
 	public void testForSetAcceptLanguageByHeaderName_acceptLanguageToEmptyString() {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Accept-Language", "");
@@ -36,13 +36,13 @@ public class LocaleControllerTest {
 				= restTemplate.exchange("/locales", HttpMethod.GET, new HttpEntity<>(headers), LocaleMap.class);
 		
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-		assertThat(response.getBody().getLocaleContextHolderLocale()).isEqualTo(Locale.ENGLISH);
+		assertThat(response.getBody().getAppLocaleContextHolderLocale()).isEqualTo(Locale.ENGLISH);
 	}
 	
 	/**
 	 * request.getLocale에선 ko_KR로 시스템의 default locale을 반환 함
 	 */
-//	@Test
+	@Test
 	public void testForSetAcceptLanguageByHeaderName_acceptLanguageToNull() {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Accept-Language", null);
@@ -51,11 +51,11 @@ public class LocaleControllerTest {
 				= restTemplate.exchange("/locales", HttpMethod.GET, new HttpEntity<>(headers), LocaleMap.class);
 		
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-		assertThat(response.getBody().getLocaleContextHolderLocale()).isEqualTo(Locale.ENGLISH);
+		assertThat(response.getBody().getAppLocaleContextHolderLocale()).isEqualTo(Locale.ENGLISH);
 	}
 	
 	
-	//	@Test
+	@Test
 	public void testForChangeAcceptLanguage() {
 		HttpHeaders headers = new HttpHeaders();
 //        headers.add("Accept-Language", "ja_JP");
@@ -65,7 +65,7 @@ public class LocaleControllerTest {
 				= restTemplate.exchange("/locales", HttpMethod.GET, new HttpEntity<>(headers), LocaleMap.class);
 		
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-		assertThat(response.getBody().getLocaleContextHolderLocale()).isEqualTo(Locale.JAPAN);
+		assertThat(response.getBody().getAppLocaleContextHolderLocale()).isEqualTo(Locale.JAPAN);
 		
 		System.out.println(Locale.KOREA);                                	//ko_KR
 		System.out.println(Locale.KOREAN);                                	//ko
@@ -93,17 +93,18 @@ public class LocaleControllerTest {
 		
 	}
 	
-	//	@Test
+	@Test
 	public void testForSendQueryString() {
 		ResponseEntity<LocaleMap> response
 				= restTemplate.getForEntity("/locales?lang=en_CA", LocaleMap.class);
 		
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-		assertThat(response.getBody().getLocaleContextHolderLocale()).isEqualTo(Locale.CANADA);
+		assertThat(response.getBody().getAppLocaleContextHolderLocale()).isEqualTo(Locale.ENGLISH);
 	}
 	
 	/**
-	 * lang으로 전송한 query parameter가 우선순위가 높다
+	 * Accept-Language로 보낸 Locale이 우선순위가 높다
+	 * 다만 값이 롷지 않다면 Request parameter로 보낸 값이 설정된다.
 	 */
 	@Test
 	public void testForChangeAcceptLanguageAndParam() {
@@ -114,12 +115,29 @@ public class LocaleControllerTest {
 				= restTemplate.exchange("/locales?lang=ko_KR", HttpMethod.GET, new HttpEntity<>(headers), LocaleMap.class);
 		
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-		assertThat(response.getBody().getLocaleContextHolderLocale()).isEqualTo(Locale.KOREA);
+		assertThat(response.getBody().getAppLocaleContextHolderLocale()).isEqualTo(Locale.KOREA);
 		assertThat(response.getBody().getRequestGetLocale()).isEqualTo(new Locale(""));        //request.getLocale 에선 아무런 결과가 없다
+	}
+
+	/**
+	 * Accept-Language로 보낸 Locale이 우선순위가 높다
+	 * 다만 값이 롷지 않다면 Request parameter로 보낸 값이 설정 되며 그마저 없다면 System의 default locale이 적용된다.
+	 */
+	@Test
+	public void testForChangeAcceptLanguageAndNonParam() {
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Accept-Language", "ja_JP");
+
+		ResponseEntity<LocaleMap> response
+				= restTemplate.exchange("/locales", HttpMethod.GET, new HttpEntity<>(headers), LocaleMap.class);
+
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(response.getBody().getAppLocaleContextHolderLocale()).isEqualTo(Locale.ENGLISH);		//System의 default locale
+		assertThat(response.getBody().getRequestGetLocale()).isEqualTo(new Locale(""));        //잘못 된 형식의 header value이므로 request.getLocale 에선 아무런 결과가 없다
 	}
 	
 	/**
-	 * lang으로 전송한 query parameter가 우선순위가 높다
+	 * Accept-Language로 보낸 Locale이 우선순위가 높다
 	 */
 	@Test
 	public void testForChangeAcceptLanguageToTagAndParam() {
@@ -130,14 +148,14 @@ public class LocaleControllerTest {
 				= restTemplate.exchange("/locales?lang=ko_KR", HttpMethod.GET, new HttpEntity<>(headers), LocaleMap.class);
 		
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-		assertThat(response.getBody().getLocaleContextHolderLocale()).isEqualTo(Locale.KOREA);
+		assertThat(response.getBody().getAppLocaleContextHolderLocale()).isEqualTo(Locale.JAPAN);
 		assertThat(response.getBody().getRequestGetLocale()).isEqualTo(Locale.JAPAN);
 	}
 	
 	/**
 	 * 지원하지 않는 local이면 ApplicationLocaleContextholder에서는 default locald을 반환할 것이다
 	 */
-//	@Test
+	@Test
 	public void testForAppLocaleContextHolder() {
 		ResponseEntity<LocaleMap> response
 				= restTemplate.getForEntity("/locales?lang=en_CA", LocaleMap.class);

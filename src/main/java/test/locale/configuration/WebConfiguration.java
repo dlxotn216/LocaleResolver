@@ -5,9 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
-import org.springframework.web.servlet.i18n.CookieLocaleResolver;
-import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import test.locale.configuration.interceptor.ApplicationLocaleChangeInterceptor;
 import test.locale.configuration.resolver.AcceptHeaderThenCookieLocaleResolver;
 
 import javax.servlet.http.HttpServletRequest;
@@ -73,26 +71,27 @@ public class WebConfiguration implements WebMvcConfigurer {
     /**
      * 파라미터로 전달 된 locale 정보를 자동으로 인터셉터에서 읽어와
      * 현재 컨텍스트에 등록 된 LocaleResolver에 setLocale을 호출하는 인터셉터
-     *
+     * <p>
      * 만약 현재 등록된 localeResolver가 setLocale을 제대로 구현하고 있지 않다면 예외가 발생할 수 있으니 주의
-     * @see org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver#setLocale(HttpServletRequest, HttpServletResponse, Locale)
      *
+     * @param registry InterceptorRegistry
+     * @see org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver#setLocale(HttpServletRequest, HttpServletResponse, Locale)
+     * <p>
      * try {
-     *      localeResolver.setLocale(request, response, parseLocaleValue(newLocale));
+     * localeResolver.setLocale(request, response, parseLocaleValue(newLocale));
      * }
      * catch (IllegalArgumentException ex) {
-     *      if (isIgnoreInvalidLocale()) {
-     *          logger.debug("Ignoring invalid locale value [" + newLocale + "]: " + ex.getMessage());
-     *      }
-     *      else {
-     *          throw ex;
-     *      }
+     * if (isIgnoreInvalidLocale()) {
+     * logger.debug("Ignoring invalid locale value [" + newLocale + "]: " + ex.getMessage());
      * }
-     * @param registry InterceptorRegistry
+     * else {
+     * throw ex;
+     * }
+     * }
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
+        ApplicationLocaleChangeInterceptor localeChangeInterceptor = new ApplicationLocaleChangeInterceptor();
         localeChangeInterceptor.setParamName("lang");
         registry.addInterceptor(localeChangeInterceptor);
     }

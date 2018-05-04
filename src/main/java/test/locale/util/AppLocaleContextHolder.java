@@ -1,5 +1,6 @@
 package test.locale.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,7 @@ import java.util.Locale;
  * Created by taesu on 2018-05-03.
  */
 @Component
+@Slf4j
 public class AppLocaleContextHolder {
 
     private static final List<Locale> acceptableLocales = new ArrayList<>();
@@ -25,6 +27,13 @@ public class AppLocaleContextHolder {
             for (int i = 0, length = applicationLocaleProperties.getLanguages().size(); i < length; i++) {
                 acceptableLocales.add(applicationLocaleProperties.getLocale(i));
             }
+        }
+    }
+
+    public static void setLocale(Locale locale) {
+        if (isPossibleLocale(locale)) {
+            log.info("Change system locale " + locale);
+            LocaleContextHolder.setLocale(locale);
         }
     }
 
